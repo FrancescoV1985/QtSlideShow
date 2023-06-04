@@ -22,7 +22,7 @@ void Worker::quit()
 
 
 SlideShowWorker::SlideShowWorker(std::function<bool(const QString, ImageMirroring)>work, unsigned int delayInMs) : Worker(delayInMs),
-    workLoadMethod(work), state(false), mirrorMode(ImageMirroring::none), mirrorModeHasChanged(false)
+    workLoadMethod(work), processingState(false), mirrorMode(ImageMirroring::none), mirrorModeHasChanged(false)
 {
 
 }
@@ -33,17 +33,31 @@ void SlideShowWorker::timeout()
 
     qDebug() << Q_FUNC_INFO << "called, thread id " << QThread::currentThreadId();
 
-    if (state)
+
+    static auto getNextImage = [&]()
+    {
+       return index >= images.size() ? std::nullopt : std::optional<const std::reference_wrapper<QString>>(images[index++]);
+
+    };
+
+    static auto getLastImage = [&]()
+    {
+       return index <= 0 || index > images.size() ? std::nullopt : std::optional<const std::reference_wrapper<QString>>(images[index-1]);
+
+    };
+
+    if (processingState)
     {
 
         if (!directory.isEmpty())
         {
-            if (index < images.size())
+            auto imageRef = getNextImage();
+
+            if (imageRef != std::nullopt)
             {
-                const QString& filename = images[index];
-                bool rv = workLoadMethod(directoryName + "/" + filename, mirrorMode);
-                index++;
-                if (rv)
+                const QString& filename = imageRef->get();
+                workLoadMethod(directoryName + "/" + filename, mirrorMode);
+                if (workLoadMethod(directoryName + "/" + filename, mirrorMode))
                 {
                     emit notifyImageReady(filename);
                 }
@@ -51,20 +65,21 @@ void SlideShowWorker::timeout()
             else
             {
                 emit notifyDirProcessed();
-                state = false;
+                processingState = false;
             }
         }
     }
     else if (mirrorModeHasChanged)
     {
         mirrorModeHasChanged = false;
-        if (index > 0 && index <= images.size())
+
+        auto imageRef = getLastImage();
+
+        if (imageRef != std::nullopt)
         {
-            const QString& filename = images[index-1];
+            const QString& filename = imageRef->get();
 
-            bool rv = workLoadMethod(directoryName + "/" + filename, mirrorMode);
-
-            if (rv)
+            if (workLoadMethod(directoryName + "/" + filename, mirrorMode))
             {
                 emit notifyImageReady(filename);
             }
@@ -98,11 +113,11 @@ void SlideShowWorker::start()
     qDebug() << Q_FUNC_INFO << "called, thread id " << QThread::currentThreadId();
 
     index = 0;
-    state = true;
+    processingState = true;
 }
 
 
 void SlideShowWorker::stop()
 {
-    state = false;
+    processingState = false;
 }

@@ -16,7 +16,7 @@ class SlideShowDelegate : public QObject
 
 public:
 
-    SlideShowDelegate(QWidget *parent = nullptr);
+    SlideShowDelegate(QSharedPointer<SlideShowView>, QWidget *parent = nullptr);
 
     ~SlideShowDelegate();
 
@@ -47,7 +47,7 @@ private:
 
     unsigned int updateTimeinMs;
     QScopedPointer<Worker> worker;
-    QScopedPointer<SlideShowView> slideShowView;
+    QSharedPointer<SlideShowView> slideShowView;
     QFuture<void> workerFuture;
 };
 

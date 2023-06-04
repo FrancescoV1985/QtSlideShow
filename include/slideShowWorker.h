@@ -75,10 +75,11 @@ private:
     QDir directory;
     QString directoryName;
     QStringList images;
-    bool state;
+    bool processingState;
     ImageMirroring mirrorMode;
     bool mirrorModeHasChanged;
     std::function<bool(const QString, ImageMirroring)> workLoadMethod;
+
 };
 
 

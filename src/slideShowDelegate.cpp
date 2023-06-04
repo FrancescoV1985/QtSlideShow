@@ -3,8 +3,8 @@
 
 
 
-SlideShowDelegate::SlideShowDelegate(QWidget *parent)
-    :  updateTimeinMs(2000), worker(nullptr), slideShowView(new SlideShowView(parent))
+SlideShowDelegate::SlideShowDelegate(QSharedPointer<SlideShowView> view, QWidget *parent)
+    :  updateTimeinMs(2000), worker(nullptr), slideShowView(view)
 {
 
     QPushButton& startButton = slideShowView->getStartButton();
@@ -95,7 +95,7 @@ void SlideShowDelegate::setExistingDirectory()
 }
 
 
-bool SlideShowDelegate::loadFile(const QString& fileName, ImageMirroring mode)
+[[nodiscard]] bool SlideShowDelegate::loadFile(const QString& fileName, ImageMirroring mode)
 {
     qDebug() << Q_FUNC_INFO << "called, thread id " << QThread::currentThreadId();
 
@@ -134,9 +134,9 @@ void SlideShowDelegate::setImage()
 
     slideShowView->getImageLabel().setPixmap(QPixmap::fromImage(slideShowView->getImage()));
 
-    slideShowView->getScrollArea().setVisible(true);
+    //slideShowView->getScrollArea().setVisible(true);
 
-    slideShowView->getImageLabel().adjustSize();
+   // slideShowView->getImageLabel().adjustSize();
 }
 
 
