@@ -37,7 +37,7 @@ SlideShowDelegate::SlideShowDelegate(QSharedPointer<SlideShowView> view, QWidget
 
         connect(slideShowWorker, &SlideShowWorker::notifyDirProcessed, this, [&]()
         {
-            startButton.setText("Start");
+            startButton.setText("Start");//TBD: remove hard coded strings
             startButton.setProperty("state", "start");
         });
 
