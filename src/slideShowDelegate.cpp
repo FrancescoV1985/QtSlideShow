@@ -15,18 +15,18 @@ SlideShowDelegate::SlideShowDelegate(QSharedPointer<SlideShowView> view, QWidget
     auto lambdaWorkLoad = [&](const QString name, ImageMirroring mode) -> bool { return this->loadFile(name, mode); };
 
 
-    connect(slideShowView.get(), &SlideShowView::startClicked, this, [&]()
+    connect(slideShowView.get(), &SlideShowView::startClicked, this, [&] //notice: with C++23 we can omit ()
     {
         emit notifyStart();
     });
 
-    connect(slideShowView.get(), &SlideShowView::stopClicked, this, [&]()
+    connect(slideShowView.get(), &SlideShowView::stopClicked, this, [&]
     {
         emit notifyStop();
     });
 
 
-    workerFuture = QtConcurrent::run([&]()
+    workerFuture = QtConcurrent::run([&]
     {
         QEventLoop loop;
 
@@ -35,7 +35,7 @@ SlideShowDelegate::SlideShowDelegate(QSharedPointer<SlideShowView> view, QWidget
 
         connect(slideShowWorker, &SlideShowWorker::notifyImageReady, this, &SlideShowDelegate::setImage);
 
-        connect(slideShowWorker, &SlideShowWorker::notifyDirProcessed, this, [&]()
+        connect(slideShowWorker, &SlideShowWorker::notifyDirProcessed, this, [&]
         {
             startButton.setText("Start");//TBD: remove hard coded strings
             startButton.setProperty("state", "start");

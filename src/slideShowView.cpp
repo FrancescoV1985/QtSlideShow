@@ -13,15 +13,15 @@ SlideShowView::SlideShowView(QWidget *parent)
     imageLabel->setBackgroundRole(QPalette::Base);
     imageLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     imageLabel->setScaledContents(true);
-    imageLabel->resize(1024, 768);
+    imageLabel->resize(1024, 768);//TBD: remove hard-coded values
     scrollArea->setBackgroundRole(QPalette::Dark);
     scrollArea->setWidget(imageLabel);
     scrollArea->setVisible(true);
 
-    startButton->setText("Start");
+    startButton->setText("Start"); //TBD: remove hard-coded strings, use state machine instead?
     startButton->setProperty("state", "start");
 
-    connect(startButton, &QAbstractButton::clicked, this, [&]()
+    connect(startButton, &QAbstractButton::clicked, this, [&] //notice: with C++23 we can omit ()
     {
         qDebug() << Q_FUNC_INFO << "called, thread id " << QThread::currentThreadId();
 
@@ -44,9 +44,11 @@ SlideShowView::SlideShowView(QWidget *parent)
 
     mirrorModeComboBox->addItems({"Mirror Mode", "None", "Vertical", "Horizontal", "Both"});
 
-    auto * model = qobject_cast<QStandardItemModel*>(mirrorModeComboBox->model());
-    auto *item = model->item(0);
-    item->setEnabled(false);
+    if (auto * model = qobject_cast<QStandardItemModel*>(mirrorModeComboBox->model()); nullptr != model)
+    {
+       auto *item = model->item(0);
+       item->setEnabled(false);
+    }
 
 
 

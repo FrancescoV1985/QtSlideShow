@@ -34,13 +34,13 @@ void SlideShowWorker::timeout()
     qDebug() << Q_FUNC_INFO << "called, thread id " << QThread::currentThreadId();
 
 
-    static auto getNextImage = [&]()
+    static auto getNextImage = [&]
     {
        return index >= images.size() ? std::nullopt : std::optional<const std::reference_wrapper<QString>>(images[index++]);
 
     };
 
-    static auto getLastImage = [&]()
+    static auto getLastImage = [&]
     {
        return index <= 0 || index > images.size() ? std::nullopt : std::optional<const std::reference_wrapper<QString>>(images[index-1]);
 
@@ -51,12 +51,9 @@ void SlideShowWorker::timeout()
 
         if (!directory.isEmpty())
         {
-            auto imageRef = getNextImage();
-
-            if (imageRef != std::nullopt)
+            if (auto imageRef = getNextImage(); imageRef != std::nullopt)
             {
                 const QString& filename = imageRef->get();
-                workLoadMethod(directoryName + "/" + filename, mirrorMode);
                 if (workLoadMethod(directoryName + "/" + filename, mirrorMode))
                 {
                     emit notifyImageReady(filename);
@@ -73,9 +70,7 @@ void SlideShowWorker::timeout()
     {
         mirrorModeHasChanged = false;
 
-        auto imageRef = getLastImage();
-
-        if (imageRef != std::nullopt)
+        if (auto imageRef = getLastImage(); imageRef != std::nullopt)
         {
             const QString& filename = imageRef->get();
 
