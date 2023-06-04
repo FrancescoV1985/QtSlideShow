@@ -61,3 +61,6 @@ CMake shall be used for the build configuration of the project.
 ### RQ_4
 To prevent the GUI from blocking, the images shall be read and processed in a separate
 (background) thread.
+
+# To Be Done
+Use QML and Software (Qt Designer?) to create the GUI and arrange its widgets
