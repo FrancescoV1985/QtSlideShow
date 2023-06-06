@@ -54,7 +54,7 @@ signals:
 
 private slots:
 
-    void timeout();
+    void timeout() override;
 
 public slots:
 
@@ -63,10 +63,10 @@ public slots:
     void mirrorCurrentImage(ImageMirroring mode);
 
 
-    void start();
+    void start() override;
 
 
-    void stop();
+    void stop() override;
 
 
 private:
